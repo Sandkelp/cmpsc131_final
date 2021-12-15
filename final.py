@@ -1,11 +1,10 @@
-fread = open("Booklist.txt", "r") #opens the book
-startNumber = 0 #initilizes how many books they started with
-currentNumber = 0 #initilizes how many books the library currently has
-restrict = False #sets the default option of being restricted as false
-booklist = [] #initializes the booklist array
+fread = open("Booklist.txt", "r")  # opens the book
+startNumber = 0  # initilizes how many books they started with
+currentNumber = 0  # initilizes how many books the library currently has
+restrict = False  # sets the default option of being restricted as false
+booklist = []  # initializes the booklist array
 
-
-#the function below reads each line and adds the data into the array
+# the function below reads each line and adds the data into the array
 s = fread.readline()
 while s != "":
     s = s.rstrip("\n")
@@ -17,11 +16,11 @@ while s != "":
     startNumber = a[1]
 
     booklist.append([a[0], int(startNumber), int(startNumber), restrict])
-    #the array looks like ["book name", start_number_of_books, current_number_of_books, restricted_or_not]
+    # the array looks like ["book name", start_number_of_books, current_number_of_books, restricted_or_not]
 
 fread.close()
 
-#function that reads the library logs
+# function that reads the library logs
 readLibLogs = open("LibraryLog.txt", "r")
 
 borrowArray = []
@@ -31,20 +30,27 @@ names = []
 for trans in readLibLogs:
     goodVal = trans.rstrip("\n")
     goodVal = trans.split("#")
-    #if borrow
-    if goodVal[0] == 'B':
 
+    # #    ____
+    # #   |  _ \
+    # #   | |_) |  ___   _ __  _ __  ___ __      __
+    # #   |  _ <  / _ \ | '__|| '__|/ _ \\ \ /\ / /
+    # #   | |_) || (_) || |   | |  | (_) |\ V  V /
+    # #   |____/  \___/ |_|   |_|   \___/  \_/\_/
+    # #
+    # #
+    if goodVal[0] == 'B':
         # see if the person exists already, if not then make a new person array
         k = 0
         personExists = False
         indexOfName = -1
         while k < len(names) and personExists != True:
             if names[k][0] == str(goodVal[2]):
-                personExists = True #if found it sets the condition to true
+                personExists = True  # if found it sets the condition to true
                 indexOfName = k
             k += 1
 
-        #looks for the book in booklist
+        # looks for the book in booklist
         indexOfBook = -1
         w = 0
         while w < len(booklist) and indexOfBook == -1:
@@ -52,42 +58,40 @@ for trans in readLibLogs:
                 indexOfBook = w
             w += 1
 
-        dayBorrow = goodVal[2]
-        #if the person has already borrowed a book then it adds that they have borrowed one more book
+        dayBorrow = goodVal[1]
+        # if the person has already borrowed a book then it adds that they have borrowed one more book
         if personExists:
             names[indexOfName][1] += 1
-            names[indexOfName][3].append( [goodVal[3] , dayBorrow] ) #adds the book onto the list of books checked out
+            names[indexOfName][3].append([goodVal[3], int(dayBorrow)])  # adds the book onto the list of books checked out
 
-        #if they have not borrowed a book yet then it adds them to the name array
+        # if they have not borrowed a book yet then it adds them to the name array
         else:
-            names.append([goodVal[2],1,0,[[goodVal[3],dayBorrow]]])
-        booklist[indexOfBook][2] -= 1 #updates booklist to show that a book has been checked out
-
+            names.append([goodVal[2], 1, 0, [[goodVal[3], int(dayBorrow)]]])
+        booklist[indexOfBook][2] -= 1  #updates booklist to show that a book has been checked out
+        #names array [name, numofbooksOut, $fines, [[nameofBook, dayBorrowed, dayssupposed to be borrowed for], [same format as other one]] ]
         borrowArrayIndex = -1
         g = 0
         borrowedAlready = False
-        #this sees if the book has already been checked out
-        '''
-        while g < len(borrowArray) and borrowedAlready != True:
-            if borrowArray[g][0] == str(goodVal[3]):
-                borrowedAlready = True
-                borrowArrayIndex = g
-            g += 1
-        
-        if borrowedAlready:
-            borrowArray[borrowArrayIndex][1] += 1
-        else:
-            borrowArray.append([booklist[indexOfBook][0],1])
-
-        # if they exist then add a book to their total
-        # add book to checked out array and remove from booklist
-        '''
-    #else if return
+    #    _____        _
+    #   |  __ \      | |
+    #   | |__) | ___ | |_  _   _  _ __  _ __
+    #   |  _  / / _ \| __|| | | || '__|| '_ \
+    #   | | \ \|  __/| |_ | |_| || |   | | | |
+    #   |_|  \_\\___| \__| \__,_||_|   |_| |_|
+    #
+    #
     elif goodVal[0] == 'R':
 
-        #find the book in book list and add it back
+        # find the book in book list and add it back
+        indexOfBook = -1
+        w = 0
+        while w < len(booklist) and indexOfBook == -1:
+            if booklist[w][0] == goodVal[3]:
+                indexOfBook = w
+            w += 1
+        booklist[indexOfBook][2] += 1 #adds book back to the library
 
-        #gets the person
+        # gets the person
         indexOfName = -1
         k = 0
         while k < len(names):
@@ -95,20 +99,28 @@ for trans in readLibLogs:
                 indexOfName = k
             k += 1
 
-        #get index of book checked out in names array
+        # get index of book checked out in names array
+        booksCheckedOutByPerson = names[indexOfName][3]
 
-        #
+        indexOfBookBorrowed = -1
+        while g < len(booksCheckedOutByPerson) and indexOfBookBorrowed == -1:
+            if goodVal[3] == booksCheckedOutByPerson[g][0]:
+                indexOfBookBorrowed = g
+            g += 1
 
 
+        #sees what day they checked it out
 
-        if booklist[4]: #if its restricted it gets a 7 day borrow
+        #caclulate the fine
+
+        if booklist[indexOfBook][3]:  # if its restricted it gets a 7 day borrow
             borrowmax = 7
         else:
-            borrowmax = 28 #else its just the regular
+            borrowmax = 28  # else its just the regular
 
-        dayreturned = goodVal[1] #gets the day returned
-        dayborrowed = goodVal[1] # gets the day borrowed
-        totaldays = dayborrowed + dayreturned
+        dayreturned = int(goodVal[1]) + 1# gets the day returned
+        dayborrowed = int(names[indexOfName][3][indexOfBookBorrowed][1]) # gets the day borrowed
+        totaldays = dayreturned - dayborrowed
         numberofdaysleft = int(borrowmax) - int(totaldays)
 
         fines = 0
@@ -118,29 +130,78 @@ for trans in readLibLogs:
                 fines = fineddays * 5
             else:
                 fines = fineddays * 1
-        names[2] = fines
+
+        names[indexOfName][2] += fines
+
+        #add the fine to the person
 
 
 
 
-    #else if add book
+    # else if add book
+    # A#11#Introduction to programming
+    #                 _      _     ____                 _
+    #       /\       | |    | |   |  _ \               | |
+    #      /  \    __| |  __| |   | |_) |  ___    ___  | | __
+    #     / /\ \  / _` | / _` |   |  _ <  / _ \  / _ \ | |/ /
+    #    / ____ \| (_| || (_| |   | |_) || (_) || (_) ||   <
+    #   /_/    \_\\__,_| \__,_|   |____/  \___/  \___/ |_|\_\
+    #
+    #
+    elif goodVal[0] == 'A':
+        #find in booklist
+        bookExists = False
+        w = 0
+        while w < len(booklist) and indexOfBook == -1:
+            if booklist[w][0] == goodVal[2]:
+                bookExists = True
+            w += 1
+        #if found then add it up
 
-    #else if pay fine
+        if bookExists:
+            booklist[w][2] += 1 #adds it to number of books avalibe
+            booklist[w][1] += 1 #adds it to number of books that can max be taken out, or the starter amount
 
+        #if not then add the book
+        else:
+            booklist.append([goodVal[2],1,1,False])
+    #    _____                  ______  _
+    #   |  __ \                |  ____|(_)
+    #   | |__) |__ _  _   _    | |__    _  _ __    ___
+    #   |  ___// _` || | | |   |  __|  | || '_ \  / _ \
+    #   | |   | (_| || |_| |   | |     | || | | ||  __/
+    #   |_|    \__,_| \__, |   |_|     |_||_| |_| \___|
+    #                  __/ |
+    #                 |___/
     elif goodVal[0] == 'P':
-        pass
-
-    #print(goodVal)
-
-
+        #find name
+        indexOfName = -1
+        k = 0
+        while k < len(names):
+            if names[k][0] == str(goodVal[2]):
+                indexOfName = k
+            k += 1
+        #subtract fine paid
+        names[indexOfName][2] -= int(goodVal[3])
 fread.close()
-#print(LibLogs)
-print(booklist)
 
+#     ____                     _    _
+#    / __ \                   | |  (_)
+#   | |  | | _   _   ___  ___ | |_  _   ___   _ __   ___
+#   | |  | || | | | / _ \/ __|| __|| | / _ \ | '_ \ / __|
+#   | |__| || |_| ||  __/\__ \| |_ | || (_) || | | |\__ \
+#    \___\_\ \__,_| \___||___/ \__||_| \___/ |_| |_||___/
+#
+#
 
+#can a student borrow a book
 
+# what is the most popular book
 
+# what books have the highest borrow ratio
 
-#print("---------")
-#print(booklist)
+# make a sorted list of sorted borrow ratios, high first
+
+#who has fines at the end of the day
+
 

@@ -1,17 +1,9 @@
-48 Laws of Power#1#TRUE
-Be Here Now#10#TRUE
-Extreme Ownership#13#FALSE
-harry potter#3#TRUE
-How to Eat#7#TRUE
-How to Win Friends & Influence People#2#FALSE
-Radical Focus#8#FALSE
-ReWork#13#FALSE
-Sapiens#4#TRUE
-Shantaram#5#FALSE
-Soft Skills#6#TRUE
-Tao of Wu#4#TRUE
-The Alchemist#1#FALSE
-The Art of War#3#TRUE
-The Book of Mistakes#8#TRUE
-The Culture Code#9#TRUE
-The Four Agreements#6#FALSE
+Intro to python#2#TRUE
+Eye of the world#3#FALSE
+Goblet of fire#2#FALSE
+Intro to c#3#TRUE
+Lord of chaos#2#FALSE
+Dragon reborn#1#FALSE
+Intro to java#1#TRUE
+Intro to assembly#1#TRUE
+Intro to csharp#1#TRUE

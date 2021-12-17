@@ -62,11 +62,12 @@ for trans in readLibLogs:
         # if the person has already borrowed a book then it adds that they have borrowed one more book
         if personExists:
             names[indexOfName][1] += 1
-            names[indexOfName][3].append([goodVal[3], int(dayBorrow)])  # adds the book onto the list of books checked out
+            names[indexOfName][3].append([goodVal[3], int(dayBorrow), int(goodVal[4])])  # adds the book onto the list of books checked out
 
         # if they have not borrowed a book yet then it adds them to the name array
         else:
-            names.append([goodVal[2], 1, 0, [[goodVal[3], int(dayBorrow)]]])
+            names.append([goodVal[2], 1, 0, [[goodVal[3], int(dayBorrow), int(goodVal[4])]]])
+
         booklist[indexOfBook][2] -= 1  #updates booklist to show that a book has been checked out
         #names array [name, numofbooksOut, $fines, [[nameofBook, dayBorrowed, dayssupposed to be borrowed for], [same format as other one]] ]
         borrowArrayIndex = -1
@@ -148,23 +149,24 @@ for trans in readLibLogs:
     #   /_/    \_\\__,_| \__,_|   |____/  \___/  \___/ |_|\_\
     #
     #
+
     elif goodVal[0] == 'A':
         #find in booklist
         bookExists = False
         w = 0
-        while w < len(booklist) and indexOfBook == -1:
-            if booklist[w][0] == goodVal[2]:
+        while w < len(booklist):
+            if booklist[w][0] == goodVal[2].strip('\n'):
                 bookExists = True
             w += 1
-        #if found then add it up
+        # if found then add it up
 
         if bookExists:
-            booklist[w][2] += 1 #adds it to number of books avalibe
-            booklist[w][1] += 1 #adds it to number of books that can max be taken out, or the starter amount
+            booklist[w - 1][2] += 1  # adds it to number of books available
+            booklist[w - 1][1] += 1  # adds it to number of books that can max be taken out, or the starter amount
 
-        #if not then add the book
+        # if not then add the book
         else:
-            booklist.append([goodVal[2],1,1,False])
+            booklist.append([goodVal[2].strip('\n'), 1, 1, False])
     #    _____                  ______  _
     #   |  __ \                |  ____|(_)
     #   | |__) |__ _  _   _    | |__    _  _ __    ___
@@ -194,14 +196,69 @@ fread.close()
 #
 #
 
+print("option 1: can a student borrow a book")
+print("option 2: what are the most popular books in the library, how many days were they borrowed")
+option= int(input("Please enter an option: "))
 #can a student borrow a book
+if option==1:
+    nameOfStudent = input("please give a name: ")
+    indexOfName = -1
+    k = 0
+    while k < len(names):
+        if names[k][0] == str(goodVal[2]):
+            indexOfName = k
+        k += 1
+    if names[indexOfName][1] >= 3 or names[indexOfName][2] > 0:
+        print("no, the student cannot borrow a book")
+    else:
+        print("yes the student can borrow a book")
 
 # what is the most popular book
+elif option==2:
+   borrowedDays = [0 for x in booklist]
+   i = 0
+   currentBook = 0
+   while i < len(names):
+       for j in range(len(names[i][3])):
+           for k in range(len(booklist)):
+               if names[i][3][j][0] == booklist[k][0]:
+                   currentBook = k
+           borrowedDays[currentBook] += names[i][3][j][2]
+       i += 1
+
+   i = 0
+   popularity = []
+   while i < len(borrowedDays):
+       popularity.append('The popularity of ' + booklist[i][0] + ': Borrowed for ' + str(borrowedDays[i]) + ' Days')
+       i += 1
+
+   i = 0
+   n = len(borrowedDays)
+   for i in range(n - 1):
+       for j in range(0, n - i - 1):
+           if borrowedDays[j] < borrowedDays[j + 1]:
+               popularity[j], popularity[j + 1] = popularity[j + 1], popularity[j]
+               borrowedDays[j], borrowedDays[j + 1] = borrowedDays[j + 1], borrowedDays[j]
+
+   i = 0
+   while i < len(borrowedDays):
+       print(popularity[i])
+       i += 1
 
 # what books have the highest borrow ratio
 
+
 # make a sorted list of sorted borrow ratios, high first
+
+
 
 #who has fines at the end of the day
 
+elif option == 3:
+
+    for name in names: #gets each name array in the main names array
+
+        if name[2] > 0: #checks to see if the person has fines
+
+            print(name[0] + "has $" + str(name[2]) + " in fines.") #if they have a fine it prints their name along with their fine.
 

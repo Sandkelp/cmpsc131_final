@@ -13,9 +13,11 @@ while s != "":
     if a[2] == "TRUE":
         restrict = True
 
-    startNumber = a[1]
-
-    booklist.append([a[0], int(startNumber), int(startNumber), restrict])
+    startNumber = a[1] #how many copies there are
+    
+    daysBorrowedFor = 0 #this is the counter for how many dayst the book was borrowed
+    
+    booklist.append([a[0], int(startNumber), int(startNumber), restrict, daysBorrowedFor])
     # the array looks like ["book name", start_number_of_books, current_number_of_books, restricted_or_not]
 
 fread.close()
@@ -73,6 +75,8 @@ for trans in readLibLogs:
         borrowArrayIndex = -1
         g = 0
         borrowedAlready = False
+        
+        #names[indexOfName][4]
     #    _____        _
     #   |  __ \      | |
     #   | |__) | ___ | |_  _   _  _ __  _ __
@@ -133,6 +137,9 @@ for trans in readLibLogs:
                 fines = fineddays * 1
 
         names[indexOfName][2] += fines
+        
+        #adding the borrowed days to the array
+        booklist[indexOfBook][4] += totaldays #adds the number of days borrowed to the counter. 
 
         #add the fine to the person
 
@@ -185,7 +192,7 @@ for trans in readLibLogs:
             k += 1
         #subtract fine paid
         names[indexOfName][2] -= int(goodVal[3])
-fread.close()
+readLibLogs.close()
 
 #     ____                     _    _
 #    / __ \                   | |  (_)

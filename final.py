@@ -16,6 +16,8 @@ while s != "":
     startNumber = a[1] #how many copies there are
     
     daysBorrowedFor = 0 #this is the counter for how many dayst the book was borrowed
+
+
     
     booklist.append([a[0], int(startNumber), int(startNumber), restrict, daysBorrowedFor])
     # the array looks like ["book name", start_number_of_books, current_number_of_books, restricted_or_not]
@@ -28,6 +30,7 @@ readLibLogs = open("LibraryLog.txt", "r")
 borrowArray = []
 
 names = []
+
 
 for trans in readLibLogs:
     goodVal = trans.rstrip("\n")
@@ -71,10 +74,9 @@ for trans in readLibLogs:
             names.append([goodVal[2], 1, 0, [[goodVal[3], int(dayBorrow), int(goodVal[4])]]])
 
         booklist[indexOfBook][2] -= 1  #updates booklist to show that a book has been checked out
+
         #names array [name, numofbooksOut, $fines, [[nameofBook, dayBorrowed, dayssupposed to be borrowed for], [same format as other one]] ]
-        borrowArrayIndex = -1
-        g = 0
-        borrowedAlready = False
+
         
         #names[indexOfName][4]
     #    _____        _
@@ -106,7 +108,7 @@ for trans in readLibLogs:
 
         # get index of book checked out in names array
         booksCheckedOutByPerson = names[indexOfName][3]
-
+        g = 0
         indexOfBookBorrowed = -1
         while g < len(booksCheckedOutByPerson) and indexOfBookBorrowed == -1:
             if goodVal[3] == booksCheckedOutByPerson[g][0]:
@@ -124,8 +126,11 @@ for trans in readLibLogs:
             borrowmax = 28  # else its just the regular
 
         dayreturned = int(goodVal[1]) + 1# gets the day returned
+
         dayborrowed = int(names[indexOfName][3][indexOfBookBorrowed][1]) # gets the day borrowed
+
         totaldays = dayreturned - dayborrowed
+
         numberofdaysleft = int(borrowmax) - int(totaldays)
 
         fines = 0
@@ -139,7 +144,10 @@ for trans in readLibLogs:
         names[indexOfName][2] += fines
         
         #adding the borrowed days to the array
-        booklist[indexOfBook][4] += totaldays #adds the number of days borrowed to the counter. 
+
+        booklist[indexOfBook][4] += totaldays #adds the number of days borrowed to the counter.
+
+
 
         #add the fine to the person
 
@@ -173,7 +181,7 @@ for trans in readLibLogs:
 
         # if not then add the book
         else:
-            booklist.append([goodVal[2].strip('\n'), 1, 1, False])
+            booklist.append([goodVal[2].strip('\n'), 1, 1, False, 0])
     #    _____                  ______  _
     #   |  __ \                |  ____|(_)
     #   | |__) |__ _  _   _    | |__    _  _ __    ___
